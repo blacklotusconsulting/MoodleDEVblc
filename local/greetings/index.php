@@ -47,8 +47,12 @@ if ($action == 'del') {
 
     if ($deleteanypost) {
         $params = array('id' => $id);
-
+        if(!$deleteanypost) {
+            $params += ['userid' => $USER->id];
+        }
         $DB->delete_records('local_greetings_messages', $params);
+        redirect($PAGE->url);
+
     }
 }
 
@@ -68,6 +72,7 @@ if ($allowpost) {
 }
 if ($data = $messageform->get_data()) {
     require_capability('local/greetings:postmessages', $context);
+
     $message = required_param('message', PARAM_TEXT);
 
     if (!empty($message)) {

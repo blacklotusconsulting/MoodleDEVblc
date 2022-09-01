@@ -21,11 +21,21 @@
  * @copyright   2022 Alessandro Romani - Black Lotus Consulting S.r.l. <info@blacklotus.eu>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_greetings';
-$plugin->release = '0.1.7';
-$plugin->version = 2022090106;
-$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('local_greetings', get_string('pluginname', 'local_greetings'));
+    $ADMIN->add('localplugins', $settings);
+
+
+    if ($ADMIN->fulltree) {
+        require_once($CFG->dirroot . '/local/greetings/lib.php');
+
+        $settings->add(new admin_setting_configcheckbox(
+                'local_greetings/showinnavigation',
+                get_string('showinnavigation', 'local_greetings'),
+                get_string('showinnavigationdesc', 'local_greetings'),
+                '1',
+        ));
+    }
+}

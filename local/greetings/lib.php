@@ -52,17 +52,18 @@ function local_greetings_get_greeting($user) {
  *
  * @param navigation_node $frontpage Node representing the front page in the navigation tree.
  */
-function local_greetings_extend_navigation_frontpage(navigation_node $frontpage)
-{
-    if (!(isguestuser())&&(isloggedin())) {
-        $frontpage->add(
-            get_string('pluginname', 'local_greetings'),
-            new moodle_url('/local/greetings/index.php'),
-            navigation_node::TYPE_CUSTOM,
-            null,
-            null,
-            new pix_icon('t/message', '')
-    );
+function local_greetings_extend_navigation_frontpage(navigation_node $frontpage) {
+    if (get_config('local_greetings', 'showinnavigation')) {
+        if (isloggedin() && !isguestuser()) {
+            $frontpage->add(
+                    get_string('pluginname', 'local_greetings'),
+                    new moodle_url('/local/greetings/index.php'),
+                    navigation_node::TYPE_CUSTOM,
+                    null,
+                    null,
+                    new pix_icon('t/message', '')
+            );
+        }
     }
 }
 /**
@@ -70,15 +71,19 @@ function local_greetings_extend_navigation_frontpage(navigation_node $frontpage)
  *
  * @param global_navigation $root Node representing the global nav page in the navigation tree.
  */
-function local_greetings_extend_navigation(global_navigation $root)
-{    if (!(isguestuser())&&(isloggedin())) {
+function local_greetings_extend_navigation(global_navigation $root) {
+    if (isloggedin() && !isguestuser()) {
+        $node = navigation_node::create(
+                get_string('pluginname', 'local_greetings'),
+                new moodle_url('/local/greetings/index.php'),
+                navigation_node::TYPE_CUSTOM,
+                null,
+                null,
+                new pix_icon('t/message', '')
+        );
 
-    $node = navigation_node::create(
-            get_string('pluginname', 'local_greetings'),
-            new moodle_url('/local/greetings/index.php')
-    );
+        $node->showinflatnavigation = get_config('local_greetings', 'showinnavigation');
 
-    $node->showinflatnavigation = true;
-    $root->add_node($node);
+        $root->add_node($node);
     }
 }
