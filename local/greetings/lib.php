@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Show greetings message.
  *
- * @param $user is current user variable.
+ * @param  $user is current user variable.
  */
 function local_greetings_get_greeting($user) {
     if ($user == null) {
