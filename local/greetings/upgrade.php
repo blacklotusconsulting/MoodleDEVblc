@@ -21,11 +21,31 @@
  * @copyright   2022 Alessandro Romani - Black Lotus Consulting S.r.l. <info@blacklotus.eu>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_greetings';
-$plugin->release = '0.1.2';
-$plugin->version = 2022090100;
-$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+/**
+ * Define upgrade steps to be performed to upgrade the plugin from the old version to the current one.
+ *
+ * @param int $oldversion Version number the plugin is being upgraded from.
+ */
+function xmldb_local_greetings_upgrade($oldversion)
+{
+    global $DB;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2022090100) {
+
+        // Define field userid to be added to local_greetings_messages.
+        $table = new xmldb_table('local_greetings_messages');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '1', 'id');
+
+        // Conditionally launch add field userid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Greetings savepoint reached.
+        upgrade_plugin_savepoint(true, XXXXXXXXXX, 'local', 'greetings');
+    }
+
+    return true;
+}
