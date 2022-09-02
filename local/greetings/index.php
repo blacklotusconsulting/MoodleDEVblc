@@ -39,7 +39,8 @@ $allowpost = has_capability('local/greetings:postmessages', $context);
 $allowview = has_capability('local/greetings:viewmessages', $context);
 $deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
 $action = optional_param('action', '', PARAM_TEXT);
-
+$messageform = new local_greetings_message_form();
+$messageformedit = new local_greetings_message_edit_form();
 if ($action == 'del') {
     require_sesskey();
 
@@ -55,10 +56,36 @@ if ($action == 'del') {
 
     }
 }
-
-$messageform = new local_greetings_message_form();
-
 echo $OUTPUT->header();
+
+if ($action == 'editmessage') {
+
+    require_sesskey();
+    require_capability('local/greetings:postmessages', $context);
+
+    $id = required_param('id', PARAM_TEXT);
+    $messageformedit->display();
+    if ($data = $messageformedit->get_data()) {
+        die('ARRIVO QUI'.$data);
+
+        if ($deleteanypost) {
+            $params = array('id' => $id);
+
+            if (!empty($editmessage)) {
+                $record = new stdClass;
+                $record->id=$id;
+                $record->message = $data;
+                $record->timecreated = time();
+                $record->userid = $USER->id;
+                $DB->update_record('local_greetings_messages', $record);
+
+            }
+
+        }
+    }
+}
+
+
 if ($allowview) {
 
     if (isloggedin()) {
@@ -83,6 +110,8 @@ if ($data = $messageform->get_data()) {
         $DB->insert_record('local_greetings_messages', $record);
     }
 }
+
+
 $userfields = \core_user\fields::for_name()->with_identity($context);
 $userfieldssql = $userfields->get_sql('u');
 
@@ -91,7 +120,8 @@ $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects
      LEFT JOIN {user} u ON u.id = m.userid
       ORDER BY timecreated DESC";
 
-$messages = $DB->get_records_sql($sql);    echo $OUTPUT->box_start('card-columns');
+$messages = $DB->get_records_sql($sql);
+echo $OUTPUT->box_start('card-columns');
     foreach ($messages as $m) {
         echo html_writer::start_tag('div', array('class' => 'card'));
         echo html_writer::start_tag('div', array('class' => 'card-body'));
@@ -107,9 +137,16 @@ $messages = $DB->get_records_sql($sql);    echo $OUTPUT->box_start('card-columns
             echo html_writer::link(
                     new moodle_url(
                             '/local/greetings/index.php',
+                            array('action' => 'editmessage', 'id' => $m->id, 'sesskey' => sesskey())
+                    ),
+                    $OUTPUT->pix_icon('t/edit', '')
+            );
+            echo html_writer::link(
+                    new moodle_url(
+                            '/local/greetings/index.php',
                             array('action' => 'del', 'id' => $m->id, 'sesskey' => sesskey())
                     ),
-                    $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+                    $OUTPUT->pix_icon('t/delete', '')
             );
             echo html_writer::end_tag('p');
         }

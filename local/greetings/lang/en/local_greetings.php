@@ -38,3 +38,4 @@ $string['greetings:viewmessages'] = 'View messages on the Greetings wall';
 $string['greetings:postmessages'] = 'Post a new message on the Greetings wall';
 $string['showinnavigation'] = 'Show in navigation';
 $string['showinnavigationdesc'] = 'When enabled will show link in navigation';
+$string['editmessage'] = 'Edit this message';

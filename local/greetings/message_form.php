@@ -40,3 +40,20 @@ class local_greetings_message_form extends moodleform {
 
 
 }
+
+class local_greetings_message_edit_form extends moodleform {
+    /**
+     * Define the form.
+     */
+    public function definition() {
+        $mform    = $this->_form; // Don't forget the underscore!
+
+        $mform->addElement('textarea', 'editmessage', get_string('editmessage', 'local_greetings'));
+        $mform->setType('editmessage', PARAM_TEXT);
+        $submitlabel = get_string('submit');
+        $mform->addElement('submit', 'submitmessage', $submitlabel);
+    }
+
+
+
+}
