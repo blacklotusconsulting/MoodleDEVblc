@@ -1,0 +1,13 @@
+.m-card-edit {
+    height: auto;
+    position: fixed;
+    z-index: 500;
+    top: 20%;
+    background-color: white;
+    padding: 25px 20px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    width: 50%;
+    right: 25%;
+    left: 25%;
+}

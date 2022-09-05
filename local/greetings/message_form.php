@@ -37,21 +37,25 @@ class local_greetings_message_form extends moodleform {
         $mform->addElement('submit', 'submitmessage', $submitlabel);
     }
 
-
-
 }
 
 class local_greetings_message_edit_form extends moodleform {
     /**
-     * Define the form.
+     * Define the form
+     *
+     * @param formiid $idform Passes the form id after submission.
      */
-    public function definition() {
+    public function definition($idform='') {
         $mform    = $this->_form; // Don't forget the underscore!
 
         $mform->addElement('textarea', 'editmessage', get_string('editmessage', 'local_greetings'));
         $mform->setType('editmessage', PARAM_TEXT);
         $submitlabel = get_string('submit');
+        $mform->addElement('hidden','formid',$idform);
+        $mform->setType('formid', PARAM_INT);
+
         $mform->addElement('submit', 'submitmessage', $submitlabel);
+
     }
 
 

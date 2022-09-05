@@ -58,33 +58,6 @@ if ($action == 'del') {
 }
 echo $OUTPUT->header();
 
-if ($action == 'editmessage') {
-
-    require_sesskey();
-    require_capability('local/greetings:postmessages', $context);
-
-    $id = required_param('id', PARAM_TEXT);
-    $messageformedit->display();
-    if ($data = $messageformedit->get_data()) {
-        die('ARRIVO QUI'.$data);
-
-        if ($deleteanypost) {
-            $params = array('id' => $id);
-
-            if (!empty($editmessage)) {
-                $record = new stdClass;
-                $record->id=$id;
-                $record->message = $data;
-                $record->timecreated = time();
-                $record->userid = $USER->id;
-                $DB->update_record('local_greetings_messages', $record);
-
-            }
-
-        }
-    }
-}
-
 
 if ($allowview) {
 
@@ -110,7 +83,22 @@ if ($data = $messageform->get_data()) {
         $DB->insert_record('local_greetings_messages', $record);
     }
 }
+if ($data = $messageformedit->get_data()) {
+    require_capability('local/greetings:postmessages', $context);
+    if ($deleteanypost) {
+      //  die(print_r($data));
+        if (!empty($messageformedit)) {
+            $record = new stdClass;
+            $record->id=$data->formid;
+            $record->message = $data->editmessage;
+            $record->timecreated = time();
+            $record->userid = $USER->id;
+            $DB->update_record('local_greetings_messages', $record);
 
+        }
+
+    }
+}
 
 $userfields = \core_user\fields::for_name()->with_identity($context);
 $userfieldssql = $userfields->get_sql('u');
@@ -148,9 +136,28 @@ echo $OUTPUT->box_start('card-columns');
                     ),
                     $OUTPUT->pix_icon('t/delete', '')
             );
+            if ($action == 'editmessage') {
+
+                require_sesskey();
+                require_capability('local/greetings:postmessages', $context);
+
+                $id = required_param('id', PARAM_TEXT);
+                $recordparam=array('formid'=>$id);
+                $messageformedit->set_data($recordparam);
+                if($id==$m->id) {
+                    echo html_writer::start_tag('div', array('class' => 'm-card-edit'));
+
+                    $messageformedit->display();
+                    echo html_writer::end_tag('div');
+
+
+                }
+            }
             echo html_writer::end_tag('p');
         }
+
     }
+
 
     echo $OUTPUT->box_end();
 
